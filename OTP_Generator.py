@@ -11,29 +11,47 @@ class OTPGenerator:
             characters = string.ascii_letters + string.digits
         else:
             characters = string.digits
+        return ''.join(random.choices(characters, k=self.length))
 
-        otp = ''.join(random.choices(characters, k=self.length))
-        return otp
-
-# CLI input usage
-try:
-    length = int(input("Enter OTP length (between 4 and 16): "))
-    if length < 4 or length > 16:
-        raise ValueError("OTP length must be between 4 and 16.")
-
+def get_valid_length():
     while True:
-        otp_type = input("Alphanumeric OTP? (yes/no): ").strip().lower()
+        try:
+            length = int(input("Enter OTP length (between 4 and 16): "))
+            if 4 <= length <= 16:
+                return length
+            else:
+                print("OTP length must be between 4 and 16.")
+        except ValueError:
+            print("Please enter a valid integer.")
+
+def get_otp_type():
+    while True:
+        otp_type = input("Alphanumeric OTP? [yes(y)/no(n)]: ").strip().lower()
         if otp_type in ['yes', 'y']:
-            alphanumeric = True
-            break
+            return True
         elif otp_type in ['no', 'n']:
-            alphanumeric = False
-            break
+            return False
         else:
             print("Please enter a valid response: yes/y or no/n.")
+
+def ask_to_continue():
+    while True:
+        choice = input("Do you want to generate another OTP? [yes(y)/no(n)]: ").strip().lower()
+        if choice in ['yes', 'y']:
+            return True
+        elif choice in ['no', 'n']:
+            return False
+        else:
+            print("Please enter yes/y or no/n.")
+
+# Main loop
+while True:
+    length = get_valid_length()
+    alphanumeric = get_otp_type()
 
     otp_gen = OTPGenerator(length=length, alphanumeric=alphanumeric)
     print("Generated OTP:", otp_gen.generate_otp())
 
-except ValueError as e:
-    print("Invalid input:", e)
+    if not ask_to_continue():
+        print("Thank you! Exiting OTP Generator.")
+        break
